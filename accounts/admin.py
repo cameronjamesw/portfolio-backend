@@ -6,4 +6,7 @@ from .models import CustomUser
 
 @admin.register(CustomUser)
 class CustomUserAdmin(UserAdmin):
-    pass
+    
+    fieldsets = UserAdmin.fieldsets + (
+        (None, {"fields": ("bio", "phone_number", "profile_image")}),
+    )
