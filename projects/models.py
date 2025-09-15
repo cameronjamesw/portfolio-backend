@@ -16,6 +16,10 @@ class Project(models.Model):
         Language,
         related_name="projects",
         )
+    image = models.ImageField(
+        upload_to='images/',
+        default='../default_image_nyj9lt',
+        blank=True)
     live_link = models.URLField(blank=False, null=False)
     repo_link = models.URLField(blank=False, null=False)
     thumbnail = models.ImageField(upload_to="projects", null=True, blank=True)
