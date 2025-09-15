@@ -6,7 +6,9 @@ from django.contrib.auth.models import AbstractUser
 class CustomUser(AbstractUser):
     bio = models.TextField(blank=True, null=True)
     phone_number = models.CharField(blank=False)
-    profile_image = models.ImageField(upload_to="profiles/", blank=True, null=True)
+    profile_image = models.ImageField(upload_to="images/", 
+                                      default="default_profile_pfhq2q",
+                                      blank=True, null=True)
 
     def __str__(self):
         return self.username
