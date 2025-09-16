@@ -1,6 +1,6 @@
 from django.db import models
 from django.conf import settings
-from languages.models import Language
+from api.languages.models import Language
 
 # Create your models here.
 

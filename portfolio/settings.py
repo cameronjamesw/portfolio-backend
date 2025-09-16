@@ -37,6 +37,14 @@ DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
+REST_FRAMEWORK = {
+    # Use Django's standard `django.contrib.auth` permissions,
+    # or allow read-only access for unauthenticated users.
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly'
+    ]
+}
+
 ALLOWED_HOSTS = [
     '.herokuapp.com',
     'https://portfolio-back-end-c6cab71f887f.herokuapp.com',
@@ -59,9 +67,9 @@ INSTALLED_APPS = [
 
     'rest_framework',
 
-    'accounts',
-    'languages',
-    'projects',
+    'api.accounts',
+    'api.languages',
+    'api.projects',
 ]
 
 MIDDLEWARE = [

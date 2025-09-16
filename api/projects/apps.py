@@ -1,6 +1,7 @@
 from django.apps import AppConfig
 
 
-class LanguagesConfig(AppConfig):
+class ProjectsConfig(AppConfig):
     default_auto_field = 'django.db.models.BigAutoField'
-    name = 'languages'
+    name = 'api.projects'
+    label = 'projects'
