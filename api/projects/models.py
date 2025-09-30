@@ -10,7 +10,7 @@ class Project(models.Model):
         on_delete=models.CASCADE,
         related_name="projects"
     )
-    name = models.CharField(blank=False, null=False)
+    name = models.CharField(blank=True, null=True)
     description = models.TextField(blank=True, null=True)
     languages = models.ManyToManyField(
         Language,
@@ -20,9 +20,8 @@ class Project(models.Model):
         upload_to='images/',
         default='../default_image_nyj9lt',
         blank=True)
-    live_link = models.URLField(blank=False, null=False)
-    repo_link = models.URLField(blank=False, null=False)
-    thumbnail = models.ImageField(upload_to="projects", null=True, blank=True)
+    live_link = models.URLField(blank=True, null=True)
+    repo_link = models.URLField(blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
