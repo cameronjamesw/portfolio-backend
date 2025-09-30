@@ -1,23 +1,26 @@
 from rest_framework import status
-from rest_framework.decorators import api_view
+from rest_framework.views import APIView
 from rest_framework.response import Response
+from rest_framework.permissions  import IsAuthenticatedOrReadOnly
+from django.http import Http404
 from .models import Project
 from .serializers import ProjectSerializer
 
 # Create your views here.
 
-@api_view(["GET", "POST"])
-def project_list(request, format=None):
+
+class ProjectList(APIView):
     """
     Lists all the projects, or creates a new one
     """
+    permission_classes = [IsAuthenticatedOrReadOnly]
 
-    if request.method == "GET":
+    def get(self, request, format=None):
         projects = Project.objects.all()
         serializer = ProjectSerializer(projects, many=True)
         return Response(serializer.data)
     
-    elif request.method == "POST":
+    def post(self, request, format=None):
         serializer = ProjectSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
@@ -25,28 +28,32 @@ def project_list(request, format=None):
         return Response(serializer.data, status=status.HTTP_400_BAD_REQUEST)
 
 
-@api_view(["GET", "PUT", "DELETE"])
-def project_detail(request, pk, format=None):
+class ProjectDetail(APIView):
     """
     Retrieve, update or delete a project
     """
+    permission_classes = [IsAuthenticatedOrReadOnly]
 
-    try:
-        project = Project.objects.get(pk=pk)
-    except Project.DoesNotExist:
-        return Response(status=status.HTTP_404_NOT_FOUND)
+    def get_object(self, pk):
+        try:
+            return Project.objects.get(pk=pk)
+        except Project.DoesNotExist:
+            raise Http404
     
-    if request.method == "GET":
+    def get(self, request, pk, format=None):
+        project = self.get_object(pk)
         serializer = ProjectSerializer(project)
         return Response(serializer.data, status=status.HTTP_200_OK)
     
-    elif request.method == "PUT":
+    def put(self, request, pk, format=None):
+        project = self.get_object(pk)
         serializer = ProjectSerializer(project, data=request.data)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_202_ACCEPTED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
-    elif request.method == "DELETE":
+    def delete(self, request, pk, format=None):
+        project = self.get_object(pk)
         project.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
