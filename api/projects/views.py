@@ -7,7 +7,7 @@ from .serializers import ProjectSerializer
 # Create your views here.
 
 @api_view(["GET", "POST"])
-def project_list(request):
+def project_list(request, format=None):
     """
     Lists all the projects, or creates a new one
     """
@@ -26,7 +26,7 @@ def project_list(request):
 
 
 @api_view(["GET", "PUT", "DELETE"])
-def project_detail(request, pk):
+def project_detail(request, pk, format=None):
     """
     Retrieve, update or delete a project
     """
