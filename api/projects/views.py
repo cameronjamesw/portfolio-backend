@@ -1,13 +1,12 @@
-from django.shortcuts import render
-from django.http import HttpResponse, JsonResponse
-from django.views.decorators.csrf import csrf_exempt
-from rest_framework.parsers import JSONParser
+from rest_framework import status
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
 from .models import Project
 from .serializers import ProjectSerializer
 
 # Create your views here.
 
-@csrf_exempt
+@api_view(["GET", "POST"])
 def project_list(request):
     """
     Lists all the projects, or creates a new one
@@ -16,18 +15,17 @@ def project_list(request):
     if request.method == "GET":
         projects = Project.objects.all()
         serializer = ProjectSerializer(projects, many=True)
-        return JsonResponse(serializer.data, safe=False)
+        return Response(serializer.data)
     
     elif request.method == "POST":
-        data = JSONParser().parse(request)
-        serializer = ProjectSerializer(data=data)
+        serializer = ProjectSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
-            return JsonResponse(serializer.data, status=201)
-        return JsonResponse(serializer.errors, status=400)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.data, status=status.HTTP_400_BAD_REQUEST)
 
 
-@csrf_exempt
+@api_view(["GET", "PUT", "DELETE"])
 def project_detail(request, pk):
     """
     Retrieve, update or delete a project
@@ -36,21 +34,19 @@ def project_detail(request, pk):
     try:
         project = Project.objects.get(pk=pk)
     except Project.DoesNotExist:
-        return HttpResponse(status=404)
+        return Response(status=status.HTTP_404_NOT_FOUND)
     
     if request.method == "GET":
         serializer = ProjectSerializer(project)
-        return JSONParser(serializer.data)
+        return Response(serializer.data, status=status.HTTP_200_OK)
     
     elif request.method == "PUT":
-        data = JSONParser().parse(request)
-        serializer = ProjectSerializer(project, data=data)
+        serializer = ProjectSerializer(project, data=request.data)
         if serializer.is_valid():
             serializer.save()
-            return JsonResponse(serializer.data, response=200)
-        return JsonResponse(serializer.errors, status=400)
+            return Response(serializer.data, status=status.HTTP_202_ACCEPTED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
     elif request.method == "DELETE":
         project.delete()
-        return HttpResponse(status=204)
-        
+        return Response(status=status.HTTP_204_NO_CONTENT)
