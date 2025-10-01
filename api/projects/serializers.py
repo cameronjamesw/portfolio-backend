@@ -15,6 +15,7 @@ class ProjectSerializer(serializers.ModelSerializer):
             'image',
             'live_link',
             'repo_link',
+            'completion_date',
             'created_at',
             'updated_at'
         ]
