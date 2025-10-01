@@ -1,7 +1,7 @@
-from rest_framework import status, generics
+from rest_framework import generics
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from rest_framework.permissions  import IsAuthenticatedOrReadOnly
+from portfolio.permissions import IsAdminUserOrReadOnly
 from django.http import Http404
 from .models import Project
 from .serializers import ProjectSerializer
@@ -13,7 +13,7 @@ class ProjectList(generics.ListCreateAPIView):
     """
     Lists all the projects, or creates a new one
     """
-    permission_classes = [IsAuthenticatedOrReadOnly]
+    permission_classes = [IsAdminUserOrReadOnly]
     queryset = Project.objects.all()
     serializer_class = ProjectSerializer
 
@@ -25,6 +25,6 @@ class ProjectDetail(generics.RetrieveUpdateDestroyAPIView):
     """
     Retrieve, update or delete a project
     """
-    permission_classes = [IsAuthenticatedOrReadOnly]
+    permission_classes = [IsAdminUserOrReadOnly]
     queryset = Project.objects.all()
     serializer_class = ProjectSerializer
