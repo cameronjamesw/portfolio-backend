@@ -22,6 +22,7 @@ class Project(models.Model):
         blank=True)
     live_link = models.URLField(blank=True, null=True)
     repo_link = models.URLField(blank=True, null=True)
+    completion_date = models.DateField(blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
