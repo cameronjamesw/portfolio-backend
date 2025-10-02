@@ -1,8 +1,5 @@
 from rest_framework import generics
-from rest_framework.views import APIView
-from rest_framework.response import Response
 from portfolio.permissions import IsAdminUserOrReadOnly
-from django.http import Http404
 from .models import Project
 from .serializers import ProjectSerializer
 
