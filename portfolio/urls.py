@@ -18,8 +18,10 @@ from django.contrib import admin
 from django.urls import path, include
 from rest_framework.urlpatterns import format_suffix_patterns
 from api.accounts import views
+from portfolio.views import top_route
 
 urlpatterns = [
+    path('', top_route),
     path('admin/', admin.site.urls),
     path('api-auth/', include('rest_framework.urls', namespace='rest_framework')),
     path('api/', include('api.urls')),
