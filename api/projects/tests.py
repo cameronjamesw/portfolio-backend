@@ -7,7 +7,12 @@ User = get_user_model()
 
 # Create your tests here.
 class TestProjectDetailAPI(APITestCase):
+    """
+    Tests for the project-detail endpoint
+    """
+
     def setUp(self):
+        # Set up pre-existing data for tests
         self.admin_user = User.objects.create_superuser(username='admin', password='adminpassword')
         self.normal_user = User.objects.create_user(username='user', password='password') 
         self.project = Project.objects.create(
@@ -53,12 +58,18 @@ class TestProjectDetailAPI(APITestCase):
 
 
 class TestProjectAPI(APITestCase):
+    """
+    Tests for the project-list endpoint
+    """
+
     def setUp(self):
+        # Sets pre-existing data for tests
         self.admin_user = User.objects.create_superuser(username='admin', password='adminpassword')
         self.normal_user = User.objects.create_user(username='user', password='password')
         self.url = reverse("project-list")
 
     def test_projects_retrieved(self):
+        # Tests that all levels of authenticated users can retrieve projects 
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
@@ -71,6 +82,7 @@ class TestProjectAPI(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     def test_unauthenticated_user_cannot_create_project(self):
+        # Tests that unauthorised users cannot create projects
         data = {
             "name": "New Project",
             "description": "Desc",
@@ -82,6 +94,7 @@ class TestProjectAPI(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
     
     def test_only_admins_can_create_projects(self):
+        # Tests that only admin users can create projects
         data = {
             "name":  "Test Project",
             "description": "This is a test description",
