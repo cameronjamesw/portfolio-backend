@@ -6,7 +6,7 @@ from django.contrib.auth import get_user_model
 User = get_user_model()
 
 # Create your tests here.
-class TestProjectAPI(APITestCase):
+class TestProjectDetailAPI(APITestCase):
     def setUp(self):
         self.admin_user = User.objects.create_superuser(username='admin', password='adminpassword')
         self.normal_user = User.objects.create_user(username='user', password='password') 
@@ -50,4 +50,50 @@ class TestProjectAPI(APITestCase):
         self.client.login(username="admin", password="adminpassword")
         response = self.client.delete(self.url)
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+
+
+class TestProjectAPI(APITestCase):
+    def setUp(self):
+        self.admin_user = User.objects.create_superuser(username='admin', password='adminpassword')
+        self.normal_user = User.objects.create_user(username='user', password='password')
+        self.url = reverse("project-list")
+
+    def test_projects_retrieved(self):
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+        self.client.login(username="user", password="password")
+        request = self.client.get(self.url)
+        self.assertEqual(request.status_code, status.HTTP_200_OK)
+
+        self.client.login(username="admin", password="adminpassword")
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+    def test_unauthenticated_user_cannot_create_project(self):
+        data = {
+            "name": "New Project",
+            "description": "Desc",
+            "live_link": "https://example.com",
+            "repo_link": "https://github.com"
+        }
     
+        response = self.client.post(self.url, data)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+    
+    def test_only_admins_can_create_projects(self):
+        data = {
+            "name":  "Test Project",
+            "description": "This is a test description",
+            "image": "",
+            "live_link": "https://heroku.com",
+            "repo_link": "https://github.com",
+        }
+        
+        self.client.login(username="user", password="password")
+        request = self.client.post(self.url, data)
+        self.assertEqual(request.status_code, status.HTTP_403_FORBIDDEN)
+
+        self.client.login(username="admin", password="adminpassword")
+        request = self.client.post(self.url, data)
+        self.assertEqual(request.status_code, status.HTTP_201_CREATED)
