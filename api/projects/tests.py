@@ -22,11 +22,13 @@ class TestProjectAPI(APITestCase):
         self.url = reverse('project-detail', kwargs={'pk': self.project.pk})
 
     def test_get_project(self):
+        # Tests that projects can be retrieved by unauthenticated users
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data['name'], self.project.name)
 
     def test_unauthorised_update_project(self):
+        # Tests that unauthorised users cannot update projects
         data = {
             "name": "Test Project 2",
         }
@@ -34,14 +36,17 @@ class TestProjectAPI(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     def test_unauthorised_delete_project(self):
+        # Tests that unauthorised users cannot delete projects
         response = self.client.delete(self.url)
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     def test_only_admin_can_delete_projects(self):
+        # Tests that a normal user cannot delete projects
         self.client.login(username="user", password="password")
         response = self.client.delete(self.url)
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
+        # Tests that an admin user can delete projects
         self.client.login(username="admin", password="adminpassword")
         response = self.client.delete(self.url)
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
