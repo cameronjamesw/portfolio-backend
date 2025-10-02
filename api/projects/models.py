@@ -15,7 +15,6 @@ class Project(models.Model):
     languages = models.ManyToManyField(
         Language,
         related_name="projects",
-        null=True,
         blank=True
         )
     image = models.ImageField(
