@@ -109,3 +109,20 @@ class TestLibraryDetailAPI(APITestCase):
         response = self.client.delete(self.url)
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
         self.assertFalse(Library.objects.filter(pk=self.library.pk).exists())
+
+    def test_update_library(self):
+        data = {
+            "name": "next.js",
+        }
+
+        response = self.client.put(self.url, data)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+        self.client.login(username="user", password="password")
+        response = self.client.put(self.url, data)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+        self.client.login(username="admin", password="adminpassword")
+        response = self.client.put(self.url, data)
+        print(f'Status code is {response.status_code}')
+        self.assertEqual(response.status_code, status.HTTP_405_METHOD_NOT_ALLOWED)
