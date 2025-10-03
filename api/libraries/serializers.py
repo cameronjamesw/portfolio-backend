@@ -8,6 +8,7 @@ class LibrarySerializer(serializers.ModelSerializer):
         model = Library
         fields = [
             'id',
+            'owner',
             'name',
             'created_at'
         ]

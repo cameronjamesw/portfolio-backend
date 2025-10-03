@@ -16,7 +16,7 @@ class LibraryList(generics.ListCreateAPIView):
     permission_classes = [IsAdminUserOrReadOnly]
 
     def perform_create(self, serializer):
-        serializer.save(user=self.request.user)
+        serializer.save(owner=self.request.user)
 
 
 class LibraryDetail(generics.RetrieveDestroyAPIView):
