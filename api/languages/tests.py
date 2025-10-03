@@ -19,24 +19,22 @@ class TestLangugagesListAPI(APITestCase):
         )
         self.url = reverse('language-list')
 
-    def test_retrieve_languages(self):
-        # Tests that languages can be retrieved by all users
+    def test_get_languages(self):
+        # Tests GET method requests for each user class
+
+        # Unauthenticated users
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data['results'][0]['name'], 'Ruby on Rails')
 
-    def test_user_retrieve_languages(self):
-        # Tests that languages can be retrieved by authenticated users
+        # Authenticated users
         self.client.login(username="user", password="password")
-
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data['results'][0]['name'], 'Ruby on Rails')
 
-    def test_admin_retrieve_languages(self):
-        # Tests that languages can be retrieved by admin users
+        # Admin users
         self.client.login(username="admin", password="adminpassword")
-        
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data['results'][0]['name'], 'Ruby on Rails')
@@ -54,50 +52,45 @@ class TestLanguageDetailAPI(APITestCase):
         )
         self.url = reverse('language-detail', kwargs={'pk': self.language.pk})
 
-    def test_retrieve_language(self):
-        # Tests that specific language can be retrieved by all users
-        response = self.client.get(self.url)
+    def test_get_language(self):
+        # Tests GET method requests for each user class
 
+        # Unauthenticated users
+        response = self.client.get(self.url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertTrue(Language.objects.filter(pk=self.language.pk).exists())
         self.assertEqual(response.data['id'], self.language.pk)
     
-    def test_user_retrieve_language(self):
-        # Tests that specific language can be retrieved by authenticated users
+        # Authenticated users
         self.client.login(username="user", password="password")
-
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertTrue(Language.objects.filter(pk=self.language.pk).exists())
         self.assertEqual(response.data['id'], self.language.pk)
 
-    def test_admin_retrieve_language(self):
-        # Tests that specific language can be retrieved by admin users
+        # Admin users
         self.client.login(username="admin", password="adminpassword")
-
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertTrue(Language.objects.filter(pk=self.language.pk).exists())
         self.assertEqual(response.data['id'], self.language.pk)
 
-    def test_unauthenticated_user_cannot_delete_language(self):
-        # Tests that unauthenticated users cannot delete language
+    def test_delete_language(self):
+        # Tests DELETE method requests for each user class
+
+        # Unauthenticated users
         response = self.client.delete(self.url)
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
         self.assertTrue(Language.objects.filter(pk=self.language.pk).exists())
 
-    def test_user_cannot_delete_language(self):
-        # Tests that authenticated users cannot delete language
+        # Authenticated users
         self.client.login(username="user", password="password")
-
         response = self.client.delete(self.url)
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
         self.assertTrue(Language.objects.filter(pk=self.language.pk).exists())
     
-    def test_admin_can_delete_language(self):
-        # Tests that admin users can delete language
+        # Admin users
         self.client.login(username="admin", password="adminpassword")
-
         response = self.client.delete(self.url)
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
         self.assertFalse(Language.objects.filter(pk=self.language.pk).exists())
