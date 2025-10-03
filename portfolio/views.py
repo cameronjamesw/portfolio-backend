@@ -8,7 +8,10 @@ from rest_framework.decorators import api_view, permission_classes
 def api_root(request, format=None):
     return Response({
         'users': reverse('user-list', request=request, format=format),
-        'projects': reverse('project-list', request=request, format=format)
+        'projects': reverse('project-list', request=request, format=format),
+        'languages': reverse('language-list', request=request, format=format),
+        'libraries': reverse('libraries-list', request=request, format=format),
+        'frameworks': reverse('framework-list', request=request, format=format)
     })
 
 
