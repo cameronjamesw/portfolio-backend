@@ -35,4 +35,35 @@ class TestLangugagesListAPI(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data['results'][0]['name'], 'Ruby on Rails')
 
+
+class TestLanguageDetailAPI(APITestCase):
+    def setUp(self):
+        self.admin_user = User.objects.create_superuser(username="admin", password="adminpassword")
+        self.normal_user = User.objects.create_user(username="user", password="password")
+        self.language = Language.objects.create(
+            name = "Ruby on Rails"
+        )
+        self.url = reverse('language-detail', kwargs={'pk': self.language.pk})
+
+    def test_retrieve_language(self):
+        response = self.client.get(self.url)
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertTrue(Language.objects.filter(pk=self.language.pk).exists())
+        self.assertEqual(response.data['id'], self.language.pk)
     
+    def test_user_retrieve_language(self):
+        self.client.login(username="user", password="password")
+
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertTrue(Language.objects.filter(pk=self.language.pk).exists())
+        self.assertEqual(response.data['id'], self.language.pk)
+
+    def test_admin_retrieve_language(self):
+        self.client.login(username="admin", password="adminpassword")
+
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertTrue(Language.objects.filter(pk=self.language.pk).exists())
+        self.assertEqual(response.data['id'], self.language.pk)
