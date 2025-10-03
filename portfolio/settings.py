@@ -74,6 +74,7 @@ INSTALLED_APPS = [
     'rest_framework',
 
     'api.accounts',
+    'api.frameworks',
     'api.languages',
     'api.libraries',
     'api.projects',
