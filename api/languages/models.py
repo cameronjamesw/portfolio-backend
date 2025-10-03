@@ -5,7 +5,7 @@ from django.conf import settings
 
 class Language(models.Model):
     name = models.CharField(blank=False)
-    creator = models.ForeignKey(
+    owner = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         related_name="languages",
         on_delete=models.SET_NULL,
