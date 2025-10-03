@@ -66,3 +66,46 @@ class TestLibraryListAPI(APITestCase):
 
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
     
+class TestLibraryDetailAPI(APITestCase):
+    def setUp(self):
+        self.admin_user = User.objects.create_superuser(username="admin", password="adminpassword")
+        self.normal_user = User.objects.create_user(username="user", password="password")
+        self.library = Library.objects.create(
+            owner = self.admin_user,
+            name = "React"
+        )
+        self.url = reverse('libraries-detail', kwargs={"pk": self.library.pk})
+
+    def test_get_library(self):
+        response = self.client.get(self.url)
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertTrue(response.data['name'] == 'React')
+        self.assertTrue(Library.objects.filter(pk=self.library.pk).exists())
+
+        self.client.login(username="user", password="password")
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertTrue(response.data['name'] == 'React')
+        self.assertTrue(Library.objects.filter(pk=self.library.pk).exists())
+
+        self.client.login(username="admin", password="adminpassword")
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertTrue(response.data['name'] == 'React')
+        self.assertTrue(Library.objects.filter(pk=self.library.pk).exists())
+
+    def test_delete_library(self):
+        response = self.client.delete(self.url)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+        self.assertTrue(Library.objects.filter(pk=self.library.pk).exists())
+
+        self.client.login(username="user", password="password")
+        response = self.client.delete(self.url)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+        self.assertTrue(Library.objects.filter(pk=self.library.pk).exists())
+
+        self.client.login(username="admin", password="adminpassword")
+        response = self.client.delete(self.url)
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+        self.assertFalse(Library.objects.filter(pk=self.library.pk).exists())
