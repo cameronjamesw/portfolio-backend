@@ -67,3 +67,22 @@ class TestLanguageDetailAPI(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertTrue(Language.objects.filter(pk=self.language.pk).exists())
         self.assertEqual(response.data['id'], self.language.pk)
+
+    def test_unauthenticated_user_cannot_delete_language(self):
+        response = self.client.delete(self.url)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+        self.assertTrue(Language.objects.filter(pk=self.language.pk).exists())
+
+    def test_user_cannot_delete_language(self):
+        self.client.login(username="user", password="password")
+
+        response = self.client.delete(self.url)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+        self.assertTrue(Language.objects.filter(pk=self.language.pk).exists())
+    
+    def test_admin_can_delete_language(self):
+        self.client.login(username="admin", password="adminpassword")
+
+        response = self.client.delete(self.url)
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+        self.assertFalse(Language.objects.filter(pk=self.language.pk).exists())
