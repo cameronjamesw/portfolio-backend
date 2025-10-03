@@ -22,3 +22,4 @@ class ProjectSerializer(serializers.ModelSerializer):
             'created_at',
             'updated_at'
         ]
+    
