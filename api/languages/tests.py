@@ -39,6 +39,26 @@ class TestLangugagesListAPI(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data['results'][0]['name'], 'Ruby on Rails')
 
+    def test_only_admin_users_can_create_language(self):
+        # Tests POST method requests for each user class
+        data = {
+            'name': 'PHP'
+        }
+
+        # Unauthenticated users
+        response = self.client.post(self.url, data)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+        # Authenticated users
+        self.client.login(username="user", password="password")
+        response = self.client.post(self.url, data)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+        # Admin users
+        self.client.login(username="admin", password="adminpassword")
+        response = self.client.post(self.url, data)
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+
 
 class TestLanguageDetailAPI(APITestCase):
     # Tests for the language-detail view
@@ -94,3 +114,23 @@ class TestLanguageDetailAPI(APITestCase):
         response = self.client.delete(self.url)
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
         self.assertFalse(Language.objects.filter(pk=self.language.pk).exists())
+
+    def test_update_language(self):
+        # Tests PUT method requests for each user class
+        data = {
+            "name": "PHP",
+        }
+
+        # Unauthenticated users
+        response = self.client.put(self.url, data)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+        # Authenticated users
+        self.client.login(username="user", password="password")
+        response = self.client.put(self.url, data)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+        # Admin users
+        self.client.login(username="admin", password="adminpassword")
+        response = self.client.put(self.url, data)
+        self.assertEqual(response.status_code, status.HTTP_405_METHOD_NOT_ALLOWED)

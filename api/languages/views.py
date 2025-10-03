@@ -15,7 +15,7 @@ class LanguageList(generics.ListCreateAPIView):
     permission_classes = [IsAdminUserOrReadOnly]
 
     def perform_create(self, serializer):
-        serializer.save(self.request.user)
+        serializer.save(owner=self.request.user)
 
 class LanguageDetail(generics.RetrieveDestroyAPIView):
     """
