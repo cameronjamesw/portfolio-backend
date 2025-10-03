@@ -75,6 +75,7 @@ INSTALLED_APPS = [
 
     'api.accounts',
     'api.languages',
+    'api.libraries',
     'api.projects',
 ]
 
